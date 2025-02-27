@@ -10,7 +10,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Use absolute paths
 dir_path_static = os.path.join(base_dir, "static")
-dir_path_public = os.path.join(base_dir, "public")
+dir_path_public = os.path.join(base_dir, "docs")
 dir_path_content = os.path.join(base_dir, "content")
 template_path = os.path.join(base_dir, "template.html")
 
