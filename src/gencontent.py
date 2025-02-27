@@ -1,7 +1,7 @@
 import os
 from markdown_blocks import markdown_to_html_node
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     print(f" * {from_path} {template_path} -> {dest_path}")
 
     with open(from_path, "r") as from_file:
@@ -17,6 +17,10 @@ def generate_page(from_path, template_path, dest_path):
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
 
+    # Replace href and src attributes with the basepath
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
+
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path:
         os.makedirs(dest_dir_path, exist_ok=True)
@@ -30,7 +34,7 @@ def extract_title(md):
             return line[2:]
     raise ValueError("no title found")
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for root, _, files in os.walk(dir_path_content):
         for file in files:
             if file.endswith(".md"):
@@ -43,14 +47,4 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
                 dest_dir = os.path.dirname(dest_path)
                 os.makedirs(dest_dir, exist_ok=True)
 
-                generate_page(md_path, template_path, dest_path)
-
-if __name__ == "__main__":
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    PROJECT_ROOT = os.path.dirname(SCRIPT_DIR)
-
-    CONTENT_DIR = os.path.join(PROJECT_ROOT, "content")
-    TEMPLATE_PATH = os.path.join(PROJECT_ROOT, "template.html")
-    PUBLIC_DIR = os.path.join(PROJECT_ROOT, "public")
-
-    generate_pages_recursive(CONTENT_DIR, TEMPLATE_PATH, PUBLIC_DIR)
+                generate_page(md_path, template_path, dest_path, basepath)
